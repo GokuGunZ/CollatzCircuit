@@ -63,7 +63,7 @@ architecture arch of collatz is
 
     component counter8b is
         port(
-            clk, reset : in std_logic;
+            clk, reset, en : in std_logic;
             Q : out std_logic_vector(7 downto 0)
         );
     end component;
@@ -71,7 +71,7 @@ architecture arch of collatz is
     signal mux1s_out, mux2s_out, reg1s_out, reg2s_out, paris_out, disparis_out, maxs_out, I2_in : std_logic_vector(9 downto 0);
     signal counters_out : std_logic_vector(7 downto 0);
     signal S_in : std_logic_vector(1 downto 0);
-    signal compare_out, en_clk, load_reset, carry_flags : std_logic;
+    signal compare_out, clk, load_reset, carry_flags : std_logic;
 
     begin
         mux4to1: mux1
@@ -88,7 +88,7 @@ architecture arch of collatz is
             D => mux1s_out,
             Q => reg1s_out,
             en => en,
-            clk => en_clk,
+            clk => clk,
             reset => reset);
         
         pari_block: pari
@@ -113,7 +113,7 @@ architecture arch of collatz is
             D =>mux2s_out,
             Q =>reg2s_out,
             en => en,
-            clk => en_clk,
+            clk => clk,
             reset => load_reset);
 
         mux2to1 : mux2
@@ -125,13 +125,12 @@ architecture arch of collatz is
 
         counter : counter8b
         port map(
-            clk => en_clk,
+            en => en,
+            clk => clk,
             reset => load_reset,
             Q => counters_out);
         
         load_reset <= reset or load;
-
-        en_clk <= not(en) or cloak;
         
         I2_in <= "00" & n_in;
 

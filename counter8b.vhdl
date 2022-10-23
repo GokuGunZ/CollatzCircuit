@@ -4,7 +4,7 @@ use ieee.numeric_std.all;
 
 entity counter8b is
     port(
-        clk, reset : in std_logic;
+        clk, reset, en : in std_logic;
         Q : out std_logic_vector(7 downto 0)
     );
 
@@ -17,7 +17,7 @@ architecture arch of counter8b is
         begin
             if(reset='1') then
                 count <= "00000000";
-            elsif(rising_edge(clk)) then
+            elsif(rising_edge(clk) and en='1') then
                 count <= count + "00000001";
             end if;
         end process;
